@@ -1,6 +1,43 @@
 import javax.swing.*;
 import java.awt.*;
 
+// Create RoundedButton class to make buttons with rounded corners
+class RoundedButton extends JButton {
+  private int radius;
+
+  public RoundedButton(String text, int radius) {
+    super(text); // Call the JButton constructor with the button text
+    this.radius = radius;
+    setFocusPainted(false); // Remove the focus painting
+    setContentAreaFilled(false); // No default background fill
+    setOpaque(false); // Make it non-opaque for transparency
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    Graphics2D g2 = (Graphics2D) g.create();
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+    // Set the background color for the button
+    g2.setColor(getBackground());
+    g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius); // Draw rounded rectangle
+
+    super.paintComponent(g); // Call parent paint
+  }
+
+  @Override
+  protected void paintBorder(Graphics g) {
+    Graphics2D g2 = (Graphics2D) g.create();
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+    // Draw rounded border
+    g2.setColor(getForeground());
+    g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+
+    g2.dispose();
+  }
+}
+
 public class Calculator {
 
   // Frame and Panels
@@ -9,11 +46,12 @@ public class Calculator {
   private JTextField textfield;
 
   // Buttons
-  private JButton[] numberButtons = new JButton[10];
-  private JButton[] functionButtons = new JButton[9];
+  private RoundedButton[] numberButtons = new RoundedButton[10];
+  private RoundedButton[] functionButtons = new RoundedButton[9];
 
   // Function Buttons
-  private JButton addButton, subButton, divButton, mulButton, eqButton, decButton, delButton, negButton, modButton;
+  private RoundedButton addButton, subButton, divButton, mulButton, eqButton, decButton, delButton, negButton,
+      modButton;
 
   // Constructor
   public Calculator() {
@@ -38,12 +76,11 @@ public class Calculator {
     textfield = new JTextField();
     textfield.setFont(new Font("Roboto", Font.BOLD, 32)); // Set the display to use "Roboto"
     textfield.setBackground(new Color(51, 51, 51)); // Equivalent to #333333
-    textfield.setForeground(Color.BLUE);
+    textfield.setForeground(Color.WHITE);
     textfield.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     textfield.setHorizontalAlignment(JTextField.RIGHT);
     textfield.setEditable(false);
     textfield.setPreferredSize(new Dimension(300, 100));
-    textfield.setForeground(Color.WHITE); // White text
     frame.add(textfield, BorderLayout.NORTH); // Add to the top of the frame
   }
 
@@ -51,20 +88,22 @@ public class Calculator {
   private void initializeButtons() {
     // Initialize number buttons (0-9)
     for (int i = 0; i < 10; i++) {
-      numberButtons[i] = new JButton(String.valueOf(i));
-      numberButtons[i].setFont(new Font("Arial", Font.BOLD, 20)); // Set font
+      numberButtons[i] = new RoundedButton(String.valueOf(i), 30); // Use RoundedButton with radius 30
+      numberButtons[i].setFont(new Font("Roboto", Font.BOLD, 32)); // Set font
+      numberButtons[i].setBackground(new Color(79, 60, 208, 255)); // Set background color
+      numberButtons[i].setForeground(new Color(243, 238, 248, 255)); // Set text color
     }
 
     // Initialize function buttons (operations and other functions)
-    addButton = new JButton("+");
-    subButton = new JButton("-");
-    divButton = new JButton("/");
-    mulButton = new JButton("X");
-    eqButton = new JButton("=");
-    decButton = new JButton(".");
-    delButton = new JButton("C");
-    negButton = new JButton("+-");
-    modButton = new JButton("%");
+    addButton = new RoundedButton("+", 30);
+    subButton = new RoundedButton("-", 30);
+    divButton = new RoundedButton("/", 30);
+    mulButton = new RoundedButton("X", 30);
+    eqButton = new RoundedButton("=", 30);
+    decButton = new RoundedButton(".", 30);
+    delButton = new RoundedButton("C", 30);
+    negButton = new RoundedButton("+-", 30);
+    modButton = new RoundedButton("%", 30);
 
     // Add all function buttons to the array
     functionButtons[0] = addButton;
@@ -78,9 +117,14 @@ public class Calculator {
     functionButtons[8] = modButton;
 
     // Set font for all function buttons
-    for (JButton button : functionButtons) {
-      button.setFont(new Font("Arial", Font.BOLD, 20));
+    for (RoundedButton button : functionButtons) {
+      button.setFont(new Font("Roboto", Font.BOLD, 32)); // Set font
+      button.setBackground(new Color(79, 60, 208, 255)); // Set background to purple
+      button.setForeground(new Color(243, 238, 248, 255)); // Set text color to white for contrast
     }
+    // Set color of the "=" button to rgba(243, 61, 29, 255)
+    eqButton.setBackground(new Color(243, 61, 29, 255)); // Set the "=" button color to red
+
   }
 
   // Method to Add Buttons to the Panel
@@ -89,6 +133,7 @@ public class Calculator {
     buttonPanel = new JPanel();
     buttonPanel.setLayout(new GridBagLayout()); // Using GridBagLayout
     GridBagConstraints c = new GridBagConstraints();
+    buttonPanel.setBackground(new Color(42, 52, 62, 255)); // Set background color
 
     // Set common GridBagConstraints properties
     c.weightx = 1;
@@ -145,9 +190,9 @@ public class Calculator {
     // Fifth row (0, ., =)
     c.gridy = 4;
     c.gridx = 0;
-    buttonPanel.add(numberButtons[0], c); // 0 button (single column)
+    buttonPanel.add(numberButtons[0], c); // 0 button
     c.gridx = 1;
-    buttonPanel.add(decButton, c); // . button (single column)
+    buttonPanel.add(decButton, c); // . button
 
     // Make the "=" button span two columns
     c.gridx = 2;
