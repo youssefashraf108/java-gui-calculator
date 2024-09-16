@@ -79,6 +79,9 @@ public class Calculator implements ActionListener {
   private double num1 = 0, num2 = 0, result = 0;
   private char operator;
 
+  // Flags
+  private boolean isErrorDisplayed = false; // Initialize the flag
+
   // Constructor
   public Calculator() {
     initializeFrame();
@@ -239,39 +242,46 @@ public class Calculator implements ActionListener {
   // Handle button click events
   @Override
   public void actionPerformed(ActionEvent e) {
+    // Reset the display whenever a number is pressed
     for (int i = 0; i < 10; i++) {
       if (e.getSource() == numberButtons[i]) {
-        textfield.setText(textfield.getText() + i);
+        textfield.setText(String.valueOf(i)); // Replace text instead of appending
+        return; // Exit after setting the number
       }
     }
+
     if (e.getSource() == decButton) {
-      textfield.setText(textfield.getText() + ".");
+      if (!textfield.getText().contains(".")) {
+        textfield.setText(textfield.getText() + ".");
+      }
     }
+
     if (e.getSource() == addButton) {
       num1 = Double.parseDouble(textfield.getText());
       operator = '+';
-      textfield.setText("");
+      textfield.setText(""); // Clear the text field after operator is selected
     }
     if (e.getSource() == subButton) {
       num1 = Double.parseDouble(textfield.getText());
       operator = '-';
-      textfield.setText("");
+      textfield.setText(""); // Clear the text field after operator is selected
     }
     if (e.getSource() == mulButton) {
       num1 = Double.parseDouble(textfield.getText());
       operator = '*';
-      textfield.setText("");
+      textfield.setText(""); // Clear the text field after operator is selected
     }
     if (e.getSource() == divButton) {
       num1 = Double.parseDouble(textfield.getText());
       operator = '/';
-      textfield.setText("");
+      textfield.setText(""); // Clear the text field after operator is selected
     }
     if (e.getSource() == modButton) {
       num1 = Double.parseDouble(textfield.getText());
       operator = '%';
-      textfield.setText("");
+      textfield.setText(""); // Clear the text field after operator is selected
     }
+
     if (e.getSource() == eqButton) {
       num2 = Double.parseDouble(textfield.getText());
       switch (operator) {
@@ -285,7 +295,12 @@ public class Calculator implements ActionListener {
           result = num1 * num2;
           break;
         case '/':
-          result = num1 / num2;
+          if (num2 != 0) {
+            result = num1 / num2;
+          } else {
+            textfield.setText("Error: Can't divide by Zero");
+            return;
+          }
           break;
         case '%':
           result = num1 % num2;
@@ -293,9 +308,11 @@ public class Calculator implements ActionListener {
       textfield.setText(String.valueOf(result));
       num1 = result; // Reset num1 to allow chaining operations
     }
+
     if (e.getSource() == delButton) {
-      textfield.setText("");
+      textfield.setText(""); // Clear display when C is pressed
     }
+
     if (e.getSource() == negButton) {
       double temp = Double.parseDouble(textfield.getText());
       temp *= -1;
