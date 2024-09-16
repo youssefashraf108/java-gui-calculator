@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Objects;
 
-// Create RoundedButton class to make buttons with rounded corners
 // Create RoundedButton class to make buttons with rounded corners
 class RoundedButton extends JButton {
   private int radius;
@@ -17,9 +17,8 @@ class RoundedButton extends JButton {
     setOpaque(false); // Make it non-opaque for transparency
 
     // Store the default and hover colors
-    // rgba(79,60,208,255)
     normalColor = new Color(79, 60, 208, 255);
-    hoverColor = new Color(61, 43, 183, 255); // Red for hover effect
+    hoverColor = new Color(61, 43, 183, 255); // Hover color
 
     // Add a MouseListener to handle the hover effect
     addMouseListener(new MouseAdapter() {
@@ -62,7 +61,7 @@ class RoundedButton extends JButton {
   }
 }
 
-public class Calculator {
+public class Calculator implements ActionListener {
 
   // Frame and Panels
   private JFrame frame;
@@ -76,6 +75,10 @@ public class Calculator {
   // Function Buttons
   private RoundedButton addButton, subButton, divButton, mulButton, eqButton, decButton, delButton, negButton,
       modButton;
+
+  // Variables for calculations
+  private double num1 = 0, num2 = 0, result = 0;
+  private char operator;
 
   // Constructor
   public Calculator() {
@@ -116,6 +119,7 @@ public class Calculator {
       numberButtons[i].setFont(new Font("Roboto", Font.BOLD, 32)); // Set font
       numberButtons[i].setBackground(new Color(79, 60, 208, 255)); // Set background color
       numberButtons[i].setForeground(new Color(243, 238, 248, 255)); // Set text color
+      numberButtons[i].addActionListener(this); // Add action listener
     }
 
     // Initialize function buttons (operations and other functions)
@@ -140,15 +144,16 @@ public class Calculator {
     functionButtons[7] = negButton;
     functionButtons[8] = modButton;
 
-    // Set font for all function buttons
+    // Set font and action listener for all function buttons
     for (RoundedButton button : functionButtons) {
       button.setFont(new Font("Roboto", Font.BOLD, 32)); // Set font
       button.setBackground(new Color(79, 60, 208, 255)); // Set background to purple
       button.setForeground(new Color(243, 238, 248, 255)); // Set text color to white for contrast
+      button.addActionListener(this); // Add action listener
     }
+
     // Set color of the "=" button to rgba(243, 61, 29, 255)
     eqButton.setBackground(new Color(243, 61, 29, 255)); // Set the "=" button color to red
-
   }
 
   // Method to Add Buttons to the Panel
@@ -230,6 +235,73 @@ public class Calculator {
   // Finalize and Display the UI
   private void finalizeUI() {
     frame.setVisible(true);
+  }
+
+  // Handle button click events
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    for (int i = 0; i < 10; i++) {
+      if (e.getSource() == numberButtons[i]) {
+        textfield.setText(textfield.getText() + i);
+      }
+    }
+    if (e.getSource() == decButton) {
+      textfield.setText(textfield.getText() + ".");
+    }
+    if (e.getSource() == addButton) {
+      num1 = Double.parseDouble(textfield.getText());
+      operator = '+';
+      textfield.setText("");
+    }
+    if (e.getSource() == subButton) {
+      num1 = Double.parseDouble(textfield.getText());
+      operator = '-';
+      textfield.setText("");
+    }
+    if (e.getSource() == mulButton) {
+      num1 = Double.parseDouble(textfield.getText());
+      operator = '*';
+      textfield.setText("");
+    }
+    if (e.getSource() == divButton) {
+      num1 = Double.parseDouble(textfield.getText());
+      operator = '/';
+      textfield.setText("");
+    }
+    if (e.getSource() == modButton) {
+      num1 = Double.parseDouble(textfield.getText());
+      operator = '%';
+      textfield.setText("");
+    }
+    if (e.getSource() == eqButton) {
+      num2 = Double.parseDouble(textfield.getText());
+      switch (operator) {
+        case '+':
+          result = num1 + num2;
+          break;
+        case '-':
+          result = num1 - num2;
+          break;
+        case '*':
+          result = num1 * num2;
+          break;
+        case '/':
+          result = num1 / num2;
+          break;
+        case '%':
+          result = num1 % num2;
+      }
+      textfield.setText(String.valueOf(result));
+      num1 = result; // Reset num1 to allow chaining operations
+    }
+    if (e.getSource() == delButton) {
+      textfield.setText("");
+    }
+    if (e.getSource() == negButton) {
+      double temp = Double.parseDouble(textfield.getText());
+      temp *= -1;
+      textfield.setText(String.valueOf(temp));
+    }
   }
 
   // Main Method to Run the Calculator
