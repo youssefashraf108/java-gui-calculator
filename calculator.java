@@ -1,9 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
+// Create RoundedButton class to make buttons with rounded corners
 // Create RoundedButton class to make buttons with rounded corners
 class RoundedButton extends JButton {
   private int radius;
+  private Color normalColor;
+  private Color hoverColor;
 
   public RoundedButton(String text, int radius) {
     super(text); // Call the JButton constructor with the button text
@@ -11,6 +15,26 @@ class RoundedButton extends JButton {
     setFocusPainted(false); // Remove the focus painting
     setContentAreaFilled(false); // No default background fill
     setOpaque(false); // Make it non-opaque for transparency
+
+    // Store the default and hover colors
+    // rgba(79,60,208,255)
+    normalColor = new Color(79, 60, 208, 255);
+    hoverColor = new Color(61, 43, 183, 255); // Red for hover effect
+
+    // Add a MouseListener to handle the hover effect
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        setBackground(hoverColor); // Set hover color when the mouse enters
+        repaint();
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        setBackground(normalColor); // Revert to normal color when the mouse exits
+        repaint();
+      }
+    });
   }
 
   @Override
