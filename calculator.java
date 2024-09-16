@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Objects;
 
 // Create RoundedButton class to make buttons with rounded corners
 class RoundedButton extends JButton {
