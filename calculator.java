@@ -1,57 +1,72 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class calculator {
-  JFrame frame;
-  JPanel panel;
-  JTextField textfield;
-  JPanel buttonPanel;
-  JButton[] numberButtons = new JButton[10];
-  JButton[] functionButtons = new JButton[9];
+public class Calculator {
 
-  public calculator() {
-    frame = new JFrame(" Crazy Calculator");
+  // Frame and Panels
+  private JFrame frame;
+  private JPanel buttonPanel;
+  private JTextField textfield;
+
+  // Buttons
+  private JButton[] numberButtons = new JButton[10];
+  private JButton[] functionButtons = new JButton[9];
+
+  // Function Buttons
+  private JButton addButton, subButton, divButton, mulButton, eqButton, decButton, delButton, negButton, modButton;
+
+  // Constructor
+  public Calculator() {
+    initializeFrame();
+    initializeTextField();
+    initializeButtons();
+    addButtonsToPanel();
+    finalizeUI();
+  }
+
+  // Method to Initialize the Frame
+  private void initializeFrame() {
+    frame = new JFrame("Crazy Calculator");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(600, 600);
+    frame.setLocationRelativeTo(null); // Center the window on the screen
+    frame.setLayout(new BorderLayout());
+  }
 
-    frame.setLocationRelativeTo(null); // Centers the window on the screen
-
-    // Intialize textField
+  // Method to Initialize the Text Field
+  private void initializeTextField() {
     textfield = new JTextField();
+    textfield.setFont(new Font("Roboto", Font.BOLD, 32)); // Set the display to use "Roboto"
+    textfield.setBackground(new Color(51, 51, 51)); // Equivalent to #333333
+    textfield.setForeground(Color.BLUE);
+    textfield.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    textfield.setHorizontalAlignment(JTextField.RIGHT);
+    textfield.setEditable(false);
+    textfield.setPreferredSize(new Dimension(300, 100));
+    textfield.setForeground(Color.WHITE); // White text
+    frame.add(textfield, BorderLayout.NORTH); // Add to the top of the frame
+  }
 
-    textfield.setFont(new Font("Calibri", Font.BOLD, 32)); // Set the font
-    textfield.setBackground(Color.LIGHT_GRAY); // Set background color
-    textfield.setForeground(Color.BLUE); // Set text color
-    textfield.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Set black border with 2px thickness
-    textfield.setHorizontalAlignment(JTextField.RIGHT); // Align text to the center
-    textfield.setEditable(false); // Makes TextField Display Only
-
-    // add text JTextfield to the frame
-    frame.add(textfield, BorderLayout.NORTH);
-
-    // Intialize the button panel with a grid layout
-    buttonPanel = new JPanel();
-    buttonPanel.setBounds(50, 100, 300, 300);
-    buttonPanel.setLayout(new GridLayout(6, 4));
-
-    // Initialize and add the buttons to the panel
+  // Method to Initialize the Buttons
+  private void initializeButtons() {
+    // Initialize number buttons (0-9)
     for (int i = 0; i < 10; i++) {
-      numberButtons[i] = new JButton(String.valueOf(i)); // Create button with label i
-      buttonPanel.add(numberButtons[i]); // Add button to the panel
+      numberButtons[i] = new JButton(String.valueOf(i));
+      numberButtons[i].setFont(new Font("Arial", Font.BOLD, 20)); // Set font
     }
-    // create operator buttons
-    JButton addButton = new JButton("+");
-    JButton subButton = new JButton("-");
-    JButton divButton = new JButton("/");
-    JButton mulButton = new JButton("*");
-    JButton eqButton = new JButton("=");
-    JButton decButton = new JButton(".");
-    JButton delButton = new JButton("C");
-    JButton negButton = new JButton("+-");
-   
 
-    // Intilialize Funtion Array
+    // Initialize function buttons (operations and other functions)
+    addButton = new JButton("+");
+    subButton = new JButton("-");
+    divButton = new JButton("/");
+    mulButton = new JButton("X");
+    eqButton = new JButton("=");
+    decButton = new JButton(".");
+    delButton = new JButton("C");
+    negButton = new JButton("+-");
+    modButton = new JButton("%");
+
+    // Add all function buttons to the array
     functionButtons[0] = addButton;
     functionButtons[1] = subButton;
     functionButtons[2] = divButton;
@@ -60,29 +75,96 @@ public class calculator {
     functionButtons[5] = decButton;
     functionButtons[6] = delButton;
     functionButtons[7] = negButton;
+    functionButtons[8] = modButton;
 
+    // Set font for all function buttons
+    for (JButton button : functionButtons) {
+      button.setFont(new Font("Arial", Font.BOLD, 20));
+    }
+  }
 
+  // Method to Add Buttons to the Panel
+  private void addButtonsToPanel() {
+    // Initialize button panel with GridBagLayout
+    buttonPanel = new JPanel();
+    buttonPanel.setLayout(new GridBagLayout()); // Using GridBagLayout
+    GridBagConstraints c = new GridBagConstraints();
 
-    // Rearrange buttons in a specific order
-    buttonPanel.add(numberButtons[7]);
-    buttonPanel.add(numberButtons[7]);
-    buttonPanel.add(numberButtons[8]);
-    buttonPanel.add(numberButtons[9]);
-    buttonPanel.add(numberButtons[4]);
-    buttonPanel.add(numberButtons[5]);
-    buttonPanel.add(numberButtons[6]);
-    buttonPanel.add(numberButtons[1]);
-    buttonPanel.add(numberButtons[2]);
-    buttonPanel.add(numberButtons[3]);
-    buttonPanel.add(numberButtons[0]);
+    // Set common GridBagConstraints properties
+    c.weightx = 1;
+    c.weighty = 1;
+    c.fill = GridBagConstraints.BOTH; // Fill the entire cell
+    c.insets = new Insets(5, 5, 5, 5); // Adding spacing between buttons
 
-    // Add button to the frame
-    frame.add(buttonPanel, BorderLayout.CENTER);
+    // Add buttons to the panel in the desired order with proper constraints
 
+    // First row (C, +/-, %, /)
+    c.gridx = 0;
+    c.gridy = 0;
+    buttonPanel.add(delButton, c); // C
+    c.gridx = 1;
+    buttonPanel.add(negButton, c); // +/-
+    c.gridx = 2;
+    buttonPanel.add(modButton, c); // %
+    c.gridx = 3;
+    buttonPanel.add(divButton, c); // /
+
+    // Second row (7, 8, 9, X)
+    c.gridy = 1;
+    c.gridx = 0;
+    buttonPanel.add(numberButtons[7], c);
+    c.gridx = 1;
+    buttonPanel.add(numberButtons[8], c);
+    c.gridx = 2;
+    buttonPanel.add(numberButtons[9], c);
+    c.gridx = 3;
+    buttonPanel.add(mulButton, c); // X
+
+    // Third row (4, 5, 6, -)
+    c.gridy = 2;
+    c.gridx = 0;
+    buttonPanel.add(numberButtons[4], c);
+    c.gridx = 1;
+    buttonPanel.add(numberButtons[5], c);
+    c.gridx = 2;
+    buttonPanel.add(numberButtons[6], c);
+    c.gridx = 3;
+    buttonPanel.add(subButton, c); // -
+
+    // Fourth row (1, 2, 3, +)
+    c.gridy = 3;
+    c.gridx = 0;
+    buttonPanel.add(numberButtons[1], c);
+    c.gridx = 1;
+    buttonPanel.add(numberButtons[2], c);
+    c.gridx = 2;
+    buttonPanel.add(numberButtons[3], c);
+    c.gridx = 3;
+    buttonPanel.add(addButton, c); // +
+
+    // Fifth row (0, ., =)
+    c.gridy = 4;
+    c.gridx = 0;
+    buttonPanel.add(numberButtons[0], c); // 0 button (single column)
+    c.gridx = 1;
+    buttonPanel.add(decButton, c); // . button (single column)
+
+    // Make the "=" button span two columns
+    c.gridx = 2;
+    c.gridwidth = 2; // Span two columns
+    buttonPanel.add(eqButton, c); // = button
+
+    // Add button panel to the frame
+    frame.add(buttonPanel, BorderLayout.CENTER); // Add button panel to the center
+  }
+
+  // Finalize and Display the UI
+  private void finalizeUI() {
     frame.setVisible(true);
   }
 
+  // Main Method to Run the Calculator
   public static void main(String[] args) {
-    new calculator();
+    new Calculator();
   }
 }
